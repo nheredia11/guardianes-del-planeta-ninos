@@ -450,240 +450,172 @@
         </div>
     </div>
 
-    <script>
-        // Estado del juego
-        let gameState = {
-            level: 0,
-            points: 0,
-            completedMissions: []
-        };
+<script>
+// ================= ESTADO DEL JUEGO =================
+let gameState = JSON.parse(localStorage.getItem("guardianesGame")) || {
+    level: 1,
+    points: 0,
+    completedMissions: []
+};
 
-        // Misiones
-        const missions = [
-            {
-                id: 1,
-                emoji: '💧',
-                title: 'Cuidar el Agua',
-                level: 'Fácil',
-                levelClass: 'easy',
-                points: 100,
-                description: '¡Cierra el grifo mientras te cepillas los dientes! Cuéntale a tu familia cómo ahorrar agua.'
-            },
-            {
-                id: 2,
-                emoji: '♻️',
-                title: 'Reciclar',
-                level: 'Fácil',
-                levelClass: 'easy',
-                points: 150,
-                description: '¡Separa la basura! Ayuda a poner el papel, plástico y vidrio en el bote correcto.'
-            },
-            {
-                id: 3,
-                emoji: '🌳',
-                title: 'Plantar una Planta',
-                level: 'Medio',
-                levelClass: 'medium',
-                points: 250,
-                description: '¡Planta una semilla! Cuídala todos los días y mira cómo crece. Las plantas limpian el aire.'
-            },
-            {
-                id: 4,
-                emoji: '🚶',
-                title: 'Caminar Más',
-                level: 'Medio',
-                levelClass: 'medium',
-                points: 350,
-                description: 'Si puedes ir caminando a un lugar cercano, ¡hazlo! Es bueno para ti y para el planeta.'
-            },
-            {
-                id: 5,
-                emoji: '🎨',
-                title: 'Hacer Arte Reciclado',
-                level: 'Difícil',
-                levelClass: 'hard',
-                points: 500,
-                description: '¡Crea algo bonito con cosas viejas! Usa cajas, botellas o papel para hacer arte.'
-            }
-        ];
+// ================= MISIONES =================
+const missions = [
+    { id: 1, emoji:'💧', title:'Cuidar el Agua', level:'Principiante', minLevel:1, points:100,
+      description:'Cierra el grifo mientras te cepillas los dientes.' },
 
-        // Personajes
-        const characters = [
-            {
-                avatar: '🦸‍♀️',
-                name: 'Capitana Verde',
-                role: 'Superheroína del Planeta',
-                description: '¡Ella protege los árboles y los animales! Te enseña a cuidar la naturaleza.'
-            },
-            {
-                avatar: '🧙‍♂️',
-                name: 'Mago del Reciclaje',
-                role: 'Experto en Magia Ecológica',
-                description: '¡Convierte la basura en tesoros! Te muestra cómo reciclar como un campeón.'
-            },
-            {
-                avatar: '🦊',
-                name: 'Zorro Sabio',
-                role: 'Guardián del Bosque',
-                description: 'Conoce todos los secretos de la naturaleza. ¡Es muy inteligente!'
-            }
-        ];
+    { id: 2, emoji:'♻️', title:'Reciclar', level:'Principiante', minLevel:1, points:150,
+      description:'Separa papel, plástico y vidrio correctamente.' },
 
-        // Datos curiosos
-        const facts = [
-            {
-                icon: '🌊',
-                title: 'El Agua es Mágica',
-                text: '¡Si cierras el grifo mientras te cepillas, ahorras 12 vasos de agua!'
-            },
-            {
-                icon: '🌳',
-                title: 'Los Árboles son Héroes',
-                text: 'Un árbol grande puede darle aire limpio a 2 personas por un año entero.'
-            },
-            {
-                icon: '🐝',
-                title: 'Las Abejas son Importantes',
-                text: 'Sin abejas no tendríamos manzanas, fresas ni muchas frutas deliciosas.'
-            },
-            {
-                icon: '♻️',
-                title: 'Reciclar es Genial',
-                text: 'Reciclar 1 botella de plástico ahorra energía para prender una lamparita por 3 horas.'
-            }
-        ];
+    { id: 3, emoji:'🌳', title:'Plantar una Planta', level:'Héroe Verde', minLevel:2, points:250,
+      description:'Siembra una semilla y cuídala todos los días.' },
 
-        // Medallas
-        const badges = [
-            { icon: '💧', name: 'Guardián del Agua' },
-            { icon: '🌳', name: 'Amigo de los Árboles' },
-            { icon: '♻️', name: 'Rey del Reciclaje' },
-            { icon: '🦋', name: 'Protector de Animales' },
-            { icon: '🌟', name: 'Super Héroe Verde' }
-        ];
+    { id: 4, emoji:'🚶', title:'Caminar Más', level:'Héroe Verde', minLevel:2, points:350,
+      description:'Camina a lugares cercanos cuando sea posible.' },
 
-        // Renderizar misiones
-        function renderMissions() {
-            const container = document.getElementById('missions');
-            container.innerHTML = '';
-            
-            missions.forEach(mission => {
-                const isCompleted = gameState.completedMissions.includes(mission.id);
-                const card = document.createElement('div');
-                card.className = 'mission-card' + (isCompleted ? ' completed' : '');
-                card.innerHTML = `
-                    <div class="mission-header ${mission.levelClass}">
-                        <div class="mission-emoji">${mission.emoji}</div>
-                        <div class="mission-title">${mission.title}</div>
-                        <div class="mission-level">${mission.level} - ${mission.points} puntos</div>
-                    </div>
-                    <div class="mission-body">
-                        <p class="mission-description">${mission.description}</p>
-                        <button class="mission-button${isCompleted ? ' completed' : ''}" 
-                                onclick="completeMission(${mission.id})"
-                                ${isCompleted ? 'disabled' : ''}>
-                            ${isCompleted ? '✅ ¡Completada!' : '🎯 ¡Hazlo!'}
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+    { id: 5, emoji:'🎨', title:'Arte Reciclado', level:'Súper Guardián', minLevel:3, points:500,
+      description:'Crea algo bonito usando materiales reciclados.' }
+];
 
-        // Renderizar personajes
-        function renderCharacters() {
-            const container = document.getElementById('characters');
-            container.innerHTML = '';
-            
-            characters.forEach(character => {
-                const card = document.createElement('div');
-                card.className = 'character-card';
-                card.innerHTML = `
-                    <div class="character-header">
-                        <div class="character-avatar">${character.avatar}</div>
-                        <div class="character-name">${character.name}</div>
-                        <div class="character-role">${character.role}</div>
-                    </div>
-                    <div class="character-body">
-                        <p class="character-description">${character.description}</p>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
+// ================= PERSONAJES =================
+const characters = [
+    { avatar:'🦸‍♀️', name:'Capitana Verde', role:'Superheroína del Planeta',
+      description:'Te enseña a proteger árboles y animales.' },
+    { avatar:'🧙‍♂️', name:'Mago del Reciclaje', role:'Experto en Magia Ecológica',
+      description:'Transforma basura en tesoros.' },
+    { avatar:'🦊', name:'Zorro Sabio', role:'Guardián del Bosque',
+      description:'Siempre tiene una pista para ayudarte.' }
+];
 
-        // Renderizar datos curiosos
-        function renderFacts() {
-            const container = document.getElementById('facts');
-            container.innerHTML = '';
-            
-            facts.forEach(fact => {
-                const card = document.createElement('div');
-                card.className = 'fact-card';
-                card.innerHTML = `
-                    <div class="fact-icon">${fact.icon}</div>
-                    <div class="fact-title">${fact.title}</div>
-                    <p class="fact-text">${fact.text}</p>
-                `;
-                container.appendChild(card);
-            });
-        }
+// ================= RENDER MISIONES =================
+function renderMissions() {
+    const container = document.getElementById('missions');
+    container.innerHTML = '';
 
-        // Renderizar medallas
-        function renderBadges() {
-            const container = document.getElementById('badges');
-            container.innerHTML = '';
-            
-            badges.forEach(badge => {
-                const badgeEl = document.createElement('div');
-                badgeEl.className = 'badge';
-                badgeEl.innerHTML = `
-                    <div class="badge-icon">${badge.icon}</div>
-                    <div class="badge-name">${badge.name}</div>
-                `;
-                container.appendChild(badgeEl);
-            });
-        }
+    missions.forEach(mission => {
+        const isCompleted = gameState.completedMissions.includes(mission.id);
+        const isLocked = gameState.level < mission.minLevel;
 
-        // Completar misión
-        function completeMission(missionId) {
-            if (gameState.completedMissions.includes(missionId)) return;
-            
-            const mission = missions.find(m => m.id === missionId);
-            gameState.completedMissions.push(missionId);
-            gameState.points += mission.points;
-            gameState.level = Math.floor(gameState.points / 500);
-            
-            showCelebration();
-            updateScores();
-            renderMissions();
-        }
+        const card = document.createElement('div');
+        card.className = 'mission-card' + (isCompleted ? ' completed' : '');
 
-        // Mostrar celebración
-        function showCelebration() {
-            const celebration = document.createElement('div');
-            celebration.className = 'celebration';
-            celebration.textContent = ['🎉', '🌟', '⭐', '🎊', '✨'][Math.floor(Math.random() * 5)];
-            document.body.appendChild(celebration);
-            
-            setTimeout(() => {
-                celebration.remove();
-            }, 1000);
-        }
+        card.innerHTML = `
+            <div class="mission-header">
+                <div class="mission-emoji">${mission.emoji}</div>
+                <div class="mission-title">${mission.title}</div>
+                <div class="mission-level">${mission.level} - ${mission.points} pts</div>
+            </div>
+            <div class="mission-body">
+                <p class="mission-description">${mission.description}</p>
+                <button class="mission-button ${isCompleted ? 'completed' : ''}"
+                    onclick="completeMission(${mission.id})"
+                    ${isCompleted || isLocked ? 'disabled' : ''}>
+                    ${isCompleted ? '✅ Completada' : isLocked ? '🔒 Bloqueada' : '🎯 ¡Hazlo!'}
+                </button>
+            </div>
+        `;
 
-        // Actualizar puntuaciones
-        function updateScores() {
-            document.getElementById('level').textContent = gameState.level;
-            document.getElementById('points').textContent = gameState.points;
-            document.getElementById('completed').textContent = gameState.completedMissions.length;
-        }
+        container.appendChild(card);
+    });
+}
 
-        // Inicializar
-        renderMissions();
-        renderCharacters();
-        renderFacts();
-        renderBadges();
-        updateScores();
-    </script>
+// ================= COMPLETAR MISIÓN =================
+function completeMission(id) {
+
+    if (gameState.completedMissions.includes(id)) {
+        alert("🌟 Ya completaste esta misión. ¡Eres increíble!");
+        return;
+    }
+
+    const mission = missions.find(m => m.id === id);
+
+    if (gameState.level < mission.minLevel) {
+        alert("🦊 El Zorro Sabio dice: Primero debes completar misiones anteriores.");
+        return;
+    }
+
+    gameState.completedMissions.push(id);
+    gameState.points += mission.points;
+
+    // Subir nivel por progreso
+    if (gameState.completedMissions.length >= 2) gameState.level = 2;
+    if (gameState.completedMissions.length >= 4) gameState.level = 3;
+
+    saveGame();
+    showCelebration();
+    updateScores();
+    renderMissions();
+
+    alert(`🎉 ¡Excelente Guardián!
+Has completado: ${mission.title}
+Ganaste ${mission.points} puntos.
+¡El planeta está más feliz gracias a ti! 🌍💚`);
+
+    checkCertificate();
+}
+
+// ================= CERTIFICADO FINAL =================
+function checkCertificate() {
+    if (gameState.completedMissions.length === missions.length) {
+        setTimeout(() => {
+            alert("🎓 ¡FELICITACIONES!\nEres oficialmente un SÚPER GUARDIÁN DEL PLANETA 🌍💚");
+        }, 500);
+    }
+}
+
+// ================= CELEBRACIÓN =================
+function showCelebration() {
+    const celebration = document.createElement('div');
+    celebration.className = 'celebration';
+    celebration.textContent = "🎊";
+    document.body.appendChild(celebration);
+    setTimeout(() => celebration.remove(), 1000);
+}
+
+// ================= PUNTUACIONES =================
+function updateScores() {
+    document.getElementById('level').textContent = gameState.level;
+    document.getElementById('points').textContent = gameState.points;
+    document.getElementById('completed').textContent = gameState.completedMissions.length;
+}
+
+// ================= GUARDADO AUTOMÁTICO =================
+function saveGame() {
+    localStorage.setItem("guardianesGame", JSON.stringify(gameState));
+}
+
+// ================= RENDER PERSONAJES =================
+function renderCharacters() {
+    const container = document.getElementById('characters');
+    container.innerHTML = '';
+
+    characters.forEach(character => {
+        const card = document.createElement('div');
+        card.className = 'character-card';
+        card.innerHTML = `
+            <div class="character-header">
+                <div class="character-avatar">${character.avatar}</div>
+                <div class="character-name">${character.name}</div>
+                <div class="character-role">${character.role}</div>
+            </div>
+            <div class="character-body">
+                <p class="character-description">${character.description}</p>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// ================= RESET OPCIONAL =================
+function resetGame() {
+    localStorage.removeItem("guardianesGame");
+    location.reload();
+}
+
+// ================= INICIALIZAR =================
+renderMissions();
+renderCharacters();
+updateScores();
+</script>
+
 </body>
 </html>
