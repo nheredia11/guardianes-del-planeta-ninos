@@ -1,242 +1,806 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Guardianes del Planeta RED 2.0</title>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<style>
-body{
-    font-family:Segoe UI;
-    background:linear-gradient(135deg,#0a3f0a,#1b5e20);
-    margin:0;
-    padding:20px;
-    color:white;
-}
-
-.container{
-    max-width:1200px;
-    margin:auto;
-    background:white;
-    color:#1b5e20;
-    padding:30px;
-    border-radius:30px;
-}
-
-h1,h2{ text-align:center; }
-
-button{
-    padding:12px 25px;
-    border:none;
-    border-radius:25px;
-    cursor:pointer;
-    margin:5px;
-    font-weight:bold;
-}
-
-.primary{ background:#4caf50; color:white; }
-.secondary{ background:#ff9800; color:white; }
-.danger{ background:#b71c1c; color:white; }
-
-.card{
-    background:#f1f8e9;
-    padding:20px;
-    border-radius:20px;
-    margin:15px 0;
-}
-
-.mission{
-    background:white;
-    padding:15px;
-    border-radius:15px;
-    margin:10px 0;
-    cursor:pointer;
-    border:3px solid #4caf50;
-}
-
-.progress-bar{
-    height:20px;
-    background:#ddd;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.progress-fill{
-    height:100%;
-    background:#4caf50;
-    width:0%;
-}
-
-.stats{
-    display:flex;
-    justify-content:space-around;
-    margin-bottom:20px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>🌍 GUARDIANES DEL PLANETA</h1>
-<p style="text-align:center;">✨ Misión Tierra Verde ✨</p>
-
-<!-- ARQUITECTURA DEL JUEGO -->
-<div class="card">
-<h2>🎮 Arquitectura del Juego (Modelo MDA)</h2>
-<p><strong>Mecánicas:</strong> Misiones, puntos, niveles, retos sorpresa, decisiones.</p>
-<p><strong>Dinámicas:</strong> Progreso, identidad heroica, responsabilidad ecológica.</p>
-<p><strong>Estética:</strong> Sensación de logro, pertenencia y superación.</p>
-</div>
-
-<!-- ESTADÍSTICAS -->
-<div class="stats">
-<div>⭐ Nivel: <span id="level">1</span></div>
-<div>🏆 Puntos: <span id="points">0</span></div>
-<div>🎯 Misiones: <span id="missionsCount">0/5</span></div>
-</div>
-
-<div class="progress-bar">
-<div class="progress-fill" id="progressFill"></div>
-</div>
-
-<!-- BOTONES DINÁMICOS -->
-<div style="text-align:center;margin-top:15px;">
-<button class="secondary" onclick="dailyChallenge()">🎲 Reto del Día</button>
-<button class="primary" onclick="moralDecision()">⚖️ Decisión Ecológica</button>
-<button class="danger" onclick="resetGame()">🔄 Reiniciar</button>
-</div>
-
-<!-- MISIONES -->
-<div class="card">
-<h2>🗺️ Misiones</h2>
-
-<div class="mission" onclick="completeMission(1)">
-💧 Cuidar el Agua (+100)
-</div>
-
-<div class="mission" onclick="completeMission(2)">
-♻️ Reciclar (+150)
-</div>
-
-<div class="mission" onclick="completeMission(3)">
-🌱 Plantar (+250)
-</div>
-
-<div class="mission" onclick="completeMission(4)">
-🚶 Caminar (+350)
-</div>
-
-<div class="mission" onclick="completeMission(5)">
-🎨 Arte Reciclado (+500)
-</div>
-
-</div>
-
-<!-- INTEGRACIÓN RED -->
-<div class="card">
-<h2>🌐 Integración del RED</h2>
-<p><strong>¿Qué permite hacer?</strong> Simular acciones ecológicas mediante interacción digital.</p>
-<p><strong>¿Cómo se integra?</strong> Cada misión activa dinámicas interactivas y retroalimentación inmediata.</p>
-<p><strong>¿Qué aporta?</strong> Aprendizaje activo, motivación y visualización del progreso.</p>
-</div>
-
-<!-- JUSTIFICACIÓN -->
-<div class="card">
-<h2>📚 Justificación Pedagógica</h2>
-<p><strong>Gee (2004):</strong> Identidad proyectiva al asumir rol de Guardián.</p>
-<p><strong>Kapp (2012):</strong> Sistema de puntos y feedback inmediato.</p>
-<p><strong>Deci & Ryan:</strong> Competencia, autonomía y relación.</p>
-<p><strong>Chamorro (2018):</strong> Desarrollo de hábitos ecológicos desde la acción.</p>
-</div>
-
-</div>
-
-<script>
-
-let gameState = JSON.parse(localStorage.getItem("guardianRED2")) || {
-    level:1,
-    points:0,
-    completed:[]
-};
-
-function saveGame(){
-    localStorage.setItem("guardianRED2",JSON.stringify(gameState));
-}
-
-function updateUI(){
-    document.getElementById("level").innerText=gameState.level;
-    document.getElementById("points").innerText=gameState.points;
-    document.getElementById("missionsCount").innerText=gameState.completed.length+"/5";
-    
-    let percent=(gameState.completed.length/5)*100;
-    document.getElementById("progressFill").style.width=percent+"%";
-}
-
-function completeMission(id){
-    if(gameState.completed.includes(id)){
-        Swal.fire("Ya completaste esta misión");
-        return;
-    }
-
-    let pointsMap={1:100,2:150,3:250,4:350,5:500};
-    gameState.points+=pointsMap[id];
-    gameState.completed.push(id);
-
-    if(gameState.completed.length>=4) gameState.level=3;
-    else if(gameState.completed.length>=2) gameState.level=2;
-
-    saveGame();
-    updateUI();
-
-    Swal.fire("🎉 Misión completada","Ganaste puntos ecológicos","success");
-}
-
-function dailyChallenge(){
-    const challenges=[
-        "🌍 Ahorra 5 litros de agua hoy",
-        "♻️ Recicla algo en casa",
-        "🚶 Camina 10 minutos",
-        "🌱 Planta algo pequeño"
-    ];
-
-    let random=challenges[Math.floor(Math.random()*challenges.length)];
-
-    Swal.fire("🎲 Reto del Día",random,"info");
-}
-
-function moralDecision(){
-    Swal.fire({
-        title:"🚰 Dejaste el grifo abierto",
-        text:"¿Qué haces?",
-        showDenyButton:true,
-        confirmButtonText:"Lo cierro",
-        denyButtonText:"Lo dejo así"
-    }).then((result)=>{
-        if(result.isConfirmed){
-            gameState.points+=20;
-            Swal.fire("Excelente decisión 💧");
-        }else{
-            gameState.points-=10;
-            Swal.fire("El planeta perdió agua 😔");
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌍 Guardianes del Planeta 🌱</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Baloo+2:wght@400;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        saveGame();
-        updateUI();
-    });
-}
 
-function resetGame(){
-    localStorage.removeItem("guardianRED2");
-    location.reload();
-}
+        body {
+            font-family: 'Baloo 2', cursive;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
 
-updateUI();
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
 
-</script>
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
 
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideDown 1s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title {
+            font-family: 'Fredoka', cursive;
+            font-size: 4rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 4px 4px 0 #ff6b6b, 8px 8px 0 #4ecdc4;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            display: inline-block;
+            backdrop-filter: blur(10px);
+            margin-bottom: 20px;
+        }
+
+        .earth-emoji {
+            font-size: 6rem;
+            animation: rotate 10s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .score-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 6px solid #fff;
+            border-radius: 30px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(1);
+            transition: all 0.3s;
+        }
+
+        .score-card:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .score-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: wiggle 1s infinite;
+        }
+
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+
+        .score-number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .score-label {
+            font-size: 1.3rem;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        .missions-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .mission-card {
+            background: white;
+            border-radius: 30px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 6px solid transparent;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            border-color: #ffd93d;
+        }
+
+        .mission-card.completed {
+            border-color: #6bcf7f;
+            background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%);
+        }
+
+        .mission-header {
+            padding: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            position: relative;
+        }
+
+        .mission-header.easy {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+        }
+
+        .mission-header.medium {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+
+        .mission-header.hard {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+
+        .mission-emoji {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: jump 0.6s infinite alternate;
+        }
+
+        @keyframes jump {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        .mission-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d3436;
+            margin: 10px 0;
+        }
+
+        .mission-level {
+            display: inline-block;
+            padding: 8px 20px;
+            background: white;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #2d3436;
+            margin: 10px 0;
+        }
+
+        .mission-body {
+            padding: 25px;
+        }
+
+        .mission-description {
+            font-size: 1.3rem;
+            color: #2d3436;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .mission-button {
+            width: 100%;
+            padding: 20px;
+            font-family: 'Fredoka', cursive;
+            font-size: 1.5rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .mission-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .mission-button:active {
+            transform: scale(0.98);
+        }
+
+        .mission-button.completed {
+            background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);
+        }
+
+        .characters-section {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+            text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .characters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .character-card {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 6px solid white;
+        }
+
+        .character-card:hover {
+            transform: rotate(-3deg) scale(1.05);
+            border-color: #ffd93d;
+        }
+
+        .character-header {
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .character-avatar {
+            font-size: 7rem;
+            margin-bottom: 15px;
+            animation: wiggle 2s infinite;
+        }
+
+        .character-name {
+            font-family: 'Fredoka', cursive;
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .character-role {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .character-body {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .character-description {
+            font-size: 1.2rem;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .fun-facts-section {
+            margin: 60px 0;
+        }
+
+        .facts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .fact-card {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            border: 6px solid transparent;
+        }
+
+        .fact-card:hover {
+            transform: translateY(-10px);
+            border-color: #ff6b6b;
+        }
+
+        .fact-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .fact-title {
+            font-family: 'Fredoka', cursive;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+
+        .fact-text {
+            font-size: 1.2rem;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        .badges-section {
+            margin: 60px 0;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .badge {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 4px solid transparent;
+        }
+
+        .badge:hover {
+            transform: scale(1.15) rotate(10deg);
+            border-color: #ffd93d;
+        }
+
+        .badge-icon {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .badge-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2d3436;
+        }
+
+        .celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem;
+            animation: celebrate 1s ease-out;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        @keyframes celebrate {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1.5);
+            }
+        }
+
+        .floating-clouds {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .cloud {
+            position: absolute;
+            font-size: 4rem;
+            opacity: 0.3;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(calc(100vw + 100%));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.3rem;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="floating-clouds" id="clouds"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="earth-emoji">🌍</div>
+            <h1 class="title">¡Guardianes del Planeta!</h1>
+            <p class="subtitle">🌱 Misión: ¡Salvar la Tierra! 🌱</p>
+        </div>
+
+        <div class="score-board">
+            <div class="score-card" style="background: linear-gradient(135deg, #ffd93d 0%, #fcb045 100%);">
+                <div class="score-icon">⭐</div>
+                <div class="score-number" id="level">0</div>
+                <div class="score-label">Nivel</div>
+            </div>
+
+            <div class="score-card" style="background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);">
+                <div class="score-icon">🏆</div>
+                <div class="score-number" id="points">0</div>
+                <div class="score-label">Puntos</div>
+            </div>
+
+            <div class="score-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);">
+                <div class="score-icon">🎯</div>
+                <div class="score-number"><span id="completed">0</span>/5</div>
+                <div class="score-label">Misiones</div>
+            </div>
+        </div>
+
+        <h2 class="section-title">🎮 Tus Misiones</h2>
+        <div class="missions-container" id="missions"></div>
+
+        <div class="characters-section">
+            <h2 class="section-title">👥 Tus Súper Amigos</h2>
+            <div class="characters-grid" id="characters"></div>
+        </div>
+
+        <div class="fun-facts-section">
+            <h2 class="section-title">💡 Datos Súper Curiosos</h2>
+            <div class="facts-grid" id="facts"></div>
+        </div>
+
+        <div class="badges-section">
+            <h2 class="section-title">🏅 Medallas Especiales</h2>
+            <div class="badges-grid" id="badges"></div>
+        </div>
+    </div>
+
+    <script>
+        // Crear estrellas
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Crear nubes
+        const cloudsContainer = document.getElementById('clouds');
+        const cloudEmojis = ['☁️', '⛅', '🌤️'];
+        for (let i = 0; i < 5; i++) {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.textContent = cloudEmojis[Math.floor(Math.random() * cloudEmojis.length)];
+            cloud.style.top = Math.random() * 80 + '%';
+            cloud.style.animationDuration = (15 + Math.random() * 10) + 's';
+            cloud.style.animationDelay = Math.random() * 5 + 's';
+            cloudsContainer.appendChild(cloud);
+        }
+
+        // Estado del juego
+        let gameState = {
+            level: 0,
+            points: 0,
+            completedMissions: []
+        };
+
+        // Misiones para niños
+        const missions = [
+            {
+                id: 1,
+                emoji: '💧',
+                title: 'Cuidar el Agua',
+                level: 'Fácil',
+                levelClass: 'easy',
+                points: 100,
+                description: '¡Cierra el grifo mientras te cepillas los dientes! Cuéntale a tu familia cómo ahorrar agua.'
+            },
+            {
+                id: 2,
+                emoji: '♻️',
+                title: 'Reciclar',
+                level: 'Fácil',
+                levelClass: 'easy',
+                points: 150,
+                description: '¡Separa la basura! Ayuda a poner el papel, plástico y vidrio en el bote correcto.'
+            },
+            {
+                id: 3,
+                emoji: '🌳',
+                title: 'Plantar una Planta',
+                level: 'Medio',
+                levelClass: 'medium',
+                points: 250,
+                description: '¡Planta una semilla! Cuídala todos los días y mira cómo crece. Las plantas limpian el aire.'
+            },
+            {
+                id: 4,
+                emoji: '🚶',
+                title: 'Caminar Más',
+                level: 'Medio',
+                levelClass: 'medium',
+                points: 350,
+                description: 'Si puedes ir caminando a un lugar cercano, ¡hazlo! Es bueno para ti y para el planeta.'
+            },
+            {
+                id: 5,
+                emoji: '🎨',
+                title: 'Hacer Arte Reciclado',
+                level: 'Difícil',
+                levelClass: 'hard',
+                points: 500,
+                description: '¡Crea algo bonito con cosas viejas! Usa cajas, botellas o papel para hacer arte.'
+            }
+        ];
+
+        // Personajes
+        const characters = [
+            {
+                avatar: '🦸‍♀️',
+                name: 'Capitana Verde',
+                role: 'Superheroína del Planeta',
+                description: '¡Ella protege los árboles y los animales! Te enseña a cuidar la naturaleza.'
+            },
+            {
+                avatar: '🧙‍♂️',
+                name: 'Mago del Reciclaje',
+                role: 'Experto en Magia Ecológica',
+                description: '¡Convierte la basura en tesoros! Te muestra cómo reciclar como un campeón.'
+            },
+            {
+                avatar: '🦊',
+                name: 'Zorro Sabio',
+                role: 'Guardián del Bosque',
+                description: 'Conoce todos los secretos de la naturaleza. ¡Es muy inteligente!'
+            }
+        ];
+
+        // Datos curiosos para niños
+        const facts = [
+            {
+                icon: '🌊',
+                title: 'El Agua es Mágica',
+                text: '¡Si cerras el grifo mientras te cepillas, ahorras 12 vasos de agua!'
+            },
+            {
+                icon: '🌳',
+                title: 'Los Árboles son Héroes',
+                text: 'Un árbol grande puede darle aire limpio a 2 personas por un año entero.'
+            },
+            {
+                icon: '🐝',
+                title: 'Las Abejas son Importantes',
+                text: 'Sin abejas no tendríamos manzanas, fresas ni muchas frutas deliciosas.'
+            },
+            {
+                icon: '♻️',
+                title: 'Reciclar es Genial',
+                text: 'Reciclar 1 botella de plástico ahorra suficiente energía para prender una lamparita por 3 horas.'
+            }
+        ];
+
+        // Medallas
+        const badges = [
+            { icon: '💧', name: 'Guardián del Agua' },
+            { icon: '🌳', name: 'Amigo de los Árboles' },
+            { icon: '♻️', name: 'Rey del Reciclaje' },
+            { icon: '🦋', name: 'Protector de Animales' },
+            { icon: '🌟', name: 'Super Héroe Verde' }
+        ];
+
+        // Renderizar misiones
+        function renderMissions() {
+            const container = document.getElementById('missions');
+            container.innerHTML = '';
+            
+            missions.forEach(mission => {
+                const isCompleted = gameState.completedMissions.includes(mission.id);
+                const card = document.createElement('div');
+                card.className = `mission-card ${isCompleted ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="mission-header ${mission.levelClass}">
+                        <div class="mission-emoji">${mission.emoji}</div>
+                        <div class="mission-title">${mission.title}</div>
+                        <div class="mission-level">${mission.level} - ${mission.points} puntos</div>
+                    </div>
+                    <div class="mission-body">
+                        <p class="mission-description">${mission.description}</p>
+                        <button class="mission-button ${isCompleted ? 'completed' : ''}" 
+                                onclick="completeMission(${mission.id})"
+                                ${isCompleted ? 'disabled' : ''}>
+                            ${isCompleted ? '✅ ¡Completada!' : '🎯 ¡Hazlo!'}
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Renderizar personajes
+        function renderCharacters() {
+            const container = document.getElementById('characters');
+            container.innerHTML = '';
+            
+            characters.forEach(character => {
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                card.innerHTML = `
+                    <div class="character-header">
+                        <div class="character-avatar">${character.avatar}</div>
+                        <div class="character-name">${character.name}</div>
+                        <div class="character-role">${character.role}</div>
+                    </div>
+                    <div class="character-body">
+                        <p class="character-description">${character.description}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Renderizar datos curiosos
+        function renderFacts() {
+            const container = document.getElementById('facts');
+            container.innerHTML = '';
+            
+            facts.forEach(fact => {
+                const card = document.createElement('div');
+                card.className = 'fact-card';
+                card.innerHTML = `
+                    <div class="fact-icon">${fact.icon}</div>
+                    <div class="fact-title">${fact.title}</div>
+                    <p class="fact-text">${fact.text}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Renderizar medallas
+        function renderBadges() {
+            const container = document.getElementById('badges');
+            container.innerHTML = '';
+            
+            badges.forEach(badge => {
+                const badgeEl = document.createElement('div');
+                badgeEl.className = 'badge';
+                badgeEl.innerHTML = `
+                    <div class="badge-icon">${badge.icon}</div>
+                    <div class="badge-name">${badge.name}</div>
+                `;
+                container.appendChild(badgeEl);
+            });
+        }
+
+        // Completar misión
+        function completeMission(missionId) {
+            if (gameState.completedMissions.includes(missionId)) return;
+            
+            const mission = missions.find(m => m.id === missionId);
+            gameState.completedMissions.push(missionId);
+            gameState.points += mission.points;
+            gameState.level = Math.floor(gameState.points / 500);
+            
+            // Celebración
+            showCelebration();
+            
+            // Actualizar UI
+            updateScores();
+            renderMissions();
+        }
+
+        // Mostrar celebración
+        function showCelebration() {
+            const celebration = document.createElement('div');
+            celebration.className = 'celebration';
+            celebration.textContent = ['🎉', '🌟', '⭐', '🎊', '✨'][Math.floor(Math.random() * 5)];
+            document.body.appendChild(celebration);
+            
+            setTimeout(() => {
+                celebration.remove();
+            }, 1000);
+        }
+
+        // Actualizar puntuaciones
+        function updateScores() {
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('points').textContent = gameState.points;
+            document.getElementById('completed').textContent = gameState.completedMissions.length;
+        }
+
+        // Inicializar
+        renderMissions();
+        renderCharacters();
+        renderFacts();
+        renderBadges();
+        updateScores();
+    </script>
 </body>
 </html>
