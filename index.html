@@ -763,6 +763,21 @@
                 <div id="levelMessage" style="text-align: center; font-size: 1.5rem; margin-top: 30px; color: #667eea; font-weight: 700;">
                     ¡Completa misiones para subir de nivel!
                 </div>
+                <div style="text-align:center; margin-top:40px;">
+                    <button onclick="resetGame()" 
+                        style="padding:15px 35px;
+                           font-family:'Fredoka', cursive;
+                           font-size:1.2rem;
+                           font-weight:700;
+                           border:none;
+                           border-radius:30px;
+                           background:linear-gradient(135deg,#ff6b6b 0%,#ff8e53 100%);
+                            color:white;
+                           cursor:pointer;
+                           box-shadow:0 8px 20px rgba(0,0,0,0.2);">
+                    🔄 Reiniciar Progreso
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -1072,6 +1087,20 @@
                 star.style.animationDelay = Math.random() * 3 + 's';
                 starsContainer.appendChild(star);
             }
+            function resetGame() {
+                if (!confirm("¿Estás seguro de que quieres reiniciar tu progreso?")) return;
+
+                gameState = {
+                    level: 0,
+                    points: 0,
+                    completedMissions: []
+                };
+
+                updateUI();
+                showSection('intro');
+                alert("✨ Tu progreso ha sido reiniciado. ¡Comienza una nueva aventura!");
+            }
+
             
             // Renderizar todo
             renderMissions();
