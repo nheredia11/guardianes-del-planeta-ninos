@@ -1,1090 +1,241 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
-    <title>🌍 Guardianes del Planeta · RED Interactivo</title>
-    
-    <!-- Font Awesome 6 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- html2canvas para certificados -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <!-- SweetAlert2 para alertas bonitas -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    
-    <style>
-        /* ========== VARIABLES Y RESET ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardianes del Planeta RED 2.0</title>
 
-        body {
-            font-family: 'Segoe UI', 'Poppins', 'Comic Sans MS', sans-serif;
-            background: linear-gradient(145deg, #0a3f0a, #1b5e20);
-            min-height: 100vh;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        /* ========== DECORACIÓN NATURALEZA ========== */
-        .floating-leaf {
-            position: fixed;
-            top: -50px;
-            font-size: 2.5rem;
-            opacity: 0.5;
-            animation: floatDown linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
+<style>
+body{
+    font-family:Segoe UI;
+    background:linear-gradient(135deg,#0a3f0a,#1b5e20);
+    margin:0;
+    padding:20px;
+    color:white;
+}
 
-        @keyframes floatDown {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
-            100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
-        }
+.container{
+    max-width:1200px;
+    margin:auto;
+    background:white;
+    color:#1b5e20;
+    padding:30px;
+    border-radius:30px;
+}
 
-        /* ========== CONTENEDOR PRINCIPAL ========== */
-        .red-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 70px 70px 50px 50px;
-            padding: 30px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            border: 8px solid #ffd700;
-            position: relative;
-            z-index: 10;
-        }
+h1,h2{ text-align:center; }
 
-        /* ========== HEADER CON NARRATIVA ANIMADA ========== */
-        .narrative-epic {
-            background: linear-gradient(135deg, #2e7d32, #1a5e1a);
-            border-radius: 50px 50px 30px 30px;
-            padding: 30px;
-            color: white;
-            text-align: center;
-            border: 6px solid #ffee58;
-            box-shadow: 0 15px 0 #b9f6ca;
-            margin-bottom: 30px;
-            position: relative;
-            overflow: hidden;
-        }
+button{
+    padding:12px 25px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    margin:5px;
+    font-weight:bold;
+}
 
-        .narrative-epic::before {
-            content: "🌍🌿🌱🍃";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            font-size: 4rem;
-            opacity: 0.1;
-            animation: slide 20s linear infinite;
-            white-space: nowrap;
-        }
+.primary{ background:#4caf50; color:white; }
+.secondary{ background:#ff9800; color:white; }
+.danger{ background:#b71c1c; color:white; }
 
-        @keyframes slide {
-            from { transform: translateX(-100%); }
-            to { transform: translateX(100%); }
-        }
+.card{
+    background:#f1f8e9;
+    padding:20px;
+    border-radius:20px;
+    margin:15px 0;
+}
 
-        .narrative-epic h1 {
-            font-size: 4rem;
-            text-shadow: 6px 6px 0 #00695c;
-            letter-spacing: 5px;
-            animation: bounceIn 1s;
-        }
+.mission{
+    background:white;
+    padding:15px;
+    border-radius:15px;
+    margin:10px 0;
+    cursor:pointer;
+    border:3px solid #4caf50;
+}
 
-        .narrative-epic p {
-            font-size: 1.6rem;
-            background: rgba(0,0,0,0.3);
-            padding: 15px 30px;
-            border-radius: 60px;
-            display: inline-block;
-            border-left: 10px solid #ffb74d;
-        }
+.progress-bar{
+    height:20px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+}
 
-        /* ========== TABLERO DEL GUARDIÁN ========== */
-        .guardian-profile {
-            background: linear-gradient(145deg, #fff9c4, #ffe082);
-            border-radius: 40px;
-            padding: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            border: 6px solid #ffb300;
-            box-shadow: 0 15px 0 #ff6f00;
-        }
+.progress-fill{
+    height:100%;
+    background:#4caf50;
+    width:0%;
+}
 
-        .guardian-avatar-section {
-            display: flex;
-            align-items: center;
-            gap: 25px;
-        }
+.stats{
+    display:flex;
+    justify-content:space-around;
+    margin-bottom:20px;
+}
 
-        .guardian-avatar-big {
-            font-size: 6rem;
-            background: #4caf50;
-            padding: 15px;
-            border-radius: 50%;
-            border: 8px solid white;
-            box-shadow: 0 0 30px #ffd700;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .guardian-name {
-            font-size: 2.5rem;
-            font-weight: 900;
-            color: #1e3c1e;
-        }
-
-        .guardian-level-badge {
-            background: #ff6f00;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-
-        /* ========== ESTADÍSTICAS ========== */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-super-card {
-            background: white;
-            border-radius: 30px;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 5px solid #fdd835;
-            box-shadow: 0 12px 0 #b26a00;
-            transition: 0.3s;
-        }
-
-        .stat-super-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 0 #b26a00;
-        }
-
-        .stat-icon-super {
-            font-size: 3.5rem;
-        }
-
-        .stat-number-super {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #1e3c1e;
-            line-height: 1;
-        }
-
-        /* ========== MAPA DE AVENTURAS (INTERACTIVO) ========== */
-        .adventure-map {
-            background: linear-gradient(145deg, #c8e6c9, #a5d6a7);
-            border-radius: 60px;
-            padding: 40px;
-            margin: 40px 0;
-            border: 8px solid #2e7d32;
-            position: relative;
-            min-height: 400px;
-        }
-
-        .map-title {
-            font-size: 2.2rem;
-            color: #1e3c1e;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .mission-path {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .mission-spot {
-            background: white;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.4s;
-            border: 10px solid;
-            box-shadow: 0 15px 0 rgba(0,0,0,0.2);
-            position: relative;
-        }
-
-        .mission-spot:hover {
-            transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 25px 0 rgba(0,0,0,0.2);
-        }
-
-        .mission-spot.completed {
-            filter: grayscale(0.5);
-            opacity: 0.8;
-            border-color: #ffd700 !important;
-        }
-
-        .mission-spot-locked {
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: #f44336;
-            color: white;
-            padding: 10px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-        }
-
-        /* ========== MINI-JUEGOS INTERACTIVOS ========== */
-        .minigame-section {
-            background: #263238;
-            border-radius: 50px;
-            padding: 30px;
-            color: white;
-            margin: 40px 0;
-            border: 8px solid #00acc1;
-        }
-
-        .minigame-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .recycle-game {
-            background: #37474f;
-            padding: 25px;
-            border-radius: 40px;
-            text-align: center;
-        }
-
-        .waste-item {
-            display: inline-block;
-            font-size: 3rem;
-            margin: 15px;
-            cursor: pointer;
-            transition: 0.2s;
-            padding: 15px;
-            background: #455a64;
-            border-radius: 20px;
-        }
-
-        .waste-item:hover {
-            transform: scale(1.2);
-            background: #546e7a;
-        }
-
-        .bin-container {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-        }
-
-        .bin {
-            background: #78909c;
-            padding: 15px;
-            border-radius: 20px;
-            width: 120px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .bin:hover {
-            transform: translateY(-10px);
-            background: #90a4ae;
-        }
-
-        .bin.blue { border-bottom: 15px solid #2196f3; }
-        .bin.yellow { border-bottom: 15px solid #ffc107; }
-        .bin.green { border-bottom: 15px solid #4caf50; }
-
-        /* ========== ÁRBOL DE PROGRESO ========== */
-        .progress-tree {
-            background: linear-gradient(145deg, #795548, #5d4037);
-            border-radius: 60px;
-            padding: 30px;
-            margin: 40px 0;
-            color: white;
-            text-align: center;
-        }
-
-        .tree-visual {
-            font-size: 8rem;
-            filter: drop-shadow(0 20px 20px rgba(0,0,0,0.5));
-            animation: sway 4s ease-in-out infinite;
-        }
-
-        @keyframes sway {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-        }
-
-        .tree-branches {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-        }
-
-        .branch {
-            background: #8d6e63;
-            padding: 15px 25px;
-            border-radius: 30px;
-            font-size: 1.3rem;
-            border: 4px solid #ffd700;
-        }
-
-        /* ========== MEDALLERO 3D ========== */
-        .hall-of-fame {
-            background: linear-gradient(145deg, #ffb74d, #ff9800);
-            border-radius: 60px;
-            padding: 30px;
-            margin: 40px 0;
-        }
-
-        .medals-3d {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 25px;
-            justify-content: center;
-        }
-
-        .medal-3d {
-            background: radial-gradient(circle at 30% 30%, #ffd700, #ffb300);
-            width: 130px;
-            height: 130px;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 8px solid white;
-            box-shadow: 0 20px 0 #b26500, 0 25px 30px black;
-            transform: rotateY(20deg) rotateX(10deg);
-            transition: 0.3s;
-        }
-
-        .medal-3d:hover {
-            transform: rotateY(0deg) rotateX(0deg) scale(1.2);
-            box-shadow: 0 30px 0 #b26500, 0 30px 40px black;
-        }
-
-        .medal-3d.locked {
-            background: radial-gradient(circle at 30% 30%, #9e9e9e, #616161);
-            box-shadow: 0 20px 0 #424242;
-        }
-
-        /* ========== CERTIFICADO ========== */
-        .certificate-premium {
-            background: linear-gradient(145deg, #fff9c4, #fff8e1);
-            border: 20px solid #4caf50;
-            border-radius: 70px;
-            padding: 50px;
-            text-align: center;
-            margin: 40px 0;
-        }
-
-        /* ========== JUSTIFICACIÓN PEDAGÓGICA ========== */
-        .pedagogy-showcase {
-            background: #e8eaf6;
-            border-radius: 50px;
-            padding: 40px;
-            margin-top: 50px;
-            border-left: 20px solid #3f51b5;
-            border-right: 20px solid #3f51b5;
-        }
-
-        .author-card {
-            background: white;
-            padding: 25px;
-            border-radius: 30px;
-            box-shadow: 0 10px 0 #c5cae9;
-            height: 100%;
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 900px) {
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .minigame-container { grid-template-columns: 1fr; }
-            .mission-path { flex-direction: column; }
-            .mission-spot { width: 140px; height: 140px; }
-        }
-    </style>
+</style>
 </head>
+
 <body>
 
-<!-- HOJAS DECORATIVAS -->
-<div id="leafContainer"></div>
+<div class="container">
 
-<div class="red-container animate__animated animate__fadeIn">
-    
-    <!-- ========== NARRATIVA ÉPICA ========== -->
-    <div class="narrative-epic animate__animated animate__zoomIn">
-        <h1>🌍 GUARDIANES DEL PLANETA</h1>
-        <p style="font-size:2.5rem;">✨ MISIÓN TIERRA VERDE ✨</p>
-        <p style="font-size:1.8rem; margin-top:20px;">
-            <i class="fas fa-quote-left"></i> 
-            Tú eres el elegido, pequeño guardián. La Tierra te necesita.
-            <i class="fas fa-quote-right"></i>
-        </p>
-    </div>
+<h1>🌍 GUARDIANES DEL PLANETA</h1>
+<p style="text-align:center;">✨ Misión Tierra Verde ✨</p>
 
-    <!-- ========== PERFIL DEL GUARDIÁN ========== -->
-    <div class="guardian-profile animate__animated animate__fadeInUp">
-        <div class="guardian-avatar-section">
-            <div class="guardian-avatar-big" id="guardianAvatar">🌱</div>
-            <div>
-                <div class="guardian-name" id="guardianNameDisplay">Guardián</div>
-                <p style="font-size:1.3rem;"><i class="fas fa-leaf" style="color:#2e7d32;"></i> Guardián del Planeta</p>
-            </div>
-        </div>
-        <div>
-            <span class="guardian-level-badge" id="levelBadge">⭐ NIVEL 1</span>
-        </div>
-    </div>
+<!-- ARQUITECTURA DEL JUEGO -->
+<div class="card">
+<h2>🎮 Arquitectura del Juego (Modelo MDA)</h2>
+<p><strong>Mecánicas:</strong> Misiones, puntos, niveles, retos sorpresa, decisiones.</p>
+<p><strong>Dinámicas:</strong> Progreso, identidad heroica, responsabilidad ecológica.</p>
+<p><strong>Estética:</strong> Sensación de logro, pertenencia y superación.</p>
+</div>
 
-    <!-- ========== ESTADÍSTICAS ========== -->
-    <div class="stats-grid">
-        <div class="stat-super-card">
-            <span class="stat-icon-super">⭐</span>
-            <div style="text-align:right;">
-                <div class="stat-number-super" id="levelDisplay">1</div>
-                <div style="font-weight:bold;">Nivel</div>
-            </div>
-        </div>
-        <div class="stat-super-card">
-            <span class="stat-icon-super">🏆</span>
-            <div style="text-align:right;">
-                <div class="stat-number-super" id="pointsDisplay">0</div>
-                <div style="font-weight:bold;">Puntos</div>
-            </div>
-        </div>
-        <div class="stat-super-card">
-            <span class="stat-icon-super">🎯</span>
-            <div style="text-align:right;">
-                <div class="stat-number-super" id="missionsCompletedDisplay">0/5</div>
-                <div style="font-weight:bold;">Misiones</div>
-            </div>
-        </div>
-        <div class="stat-super-card">
-            <span class="stat-icon-super">🏅</span>
-            <div style="text-align:right;">
-                <div class="stat-number-super" id="badgesCountDisplay">0</div>
-                <div style="font-weight:bold;">Medallas</div>
-            </div>
-        </div>
-    </div>
+<!-- ESTADÍSTICAS -->
+<div class="stats">
+<div>⭐ Nivel: <span id="level">1</span></div>
+<div>🏆 Puntos: <span id="points">0</span></div>
+<div>🎯 Misiones: <span id="missionsCount">0/5</span></div>
+</div>
 
-    <!-- ========== MAPA INTERACTIVO DE MISIONES ========== -->
-    <div class="adventure-map animate__animated animate__fadeInLeft">
-        <div class="map-title">
-            <i class="fas fa-map-marked-alt" style="font-size:3rem;"></i> 
-            MAPA DE AVENTURAS ECOLÓGICAS
-        </div>
-        <div class="mission-path" id="missionPath">
-            <!-- JS GENERA MISIONES -->
-        </div>
-        <p style="margin-top:30px; font-size:1.3rem; background:white; padding:15px; border-radius:40px; text-align:center;">
-            <i class="fas fa-info-circle"></i> Haz clic en cada misión para ver los detalles y cumplirla
-        </p>
-    </div>
+<div class="progress-bar">
+<div class="progress-fill" id="progressFill"></div>
+</div>
 
-    <!-- ========== SECCIÓN DE MINI-JUEGOS (RED INTERACTIVO) ========== -->
-    <div class="minigame-section animate__animated animate__fadeInRight">
-        <h2 style="font-size:2.5rem; color:#b3e5fc;"><i class="fas fa-gamepad"></i> RECURSO EDUCATIVO DIGITAL · MINI-JUEGOS</h2>
-        <p style="font-size:1.4rem; margin-bottom:20px;">✨ ¡Aprende jugando con estas actividades interactivas! ✨</p>
-        
-        <div class="minigame-container">
-            <!-- JUEGO 1: RECICLAJE -->
-            <div class="recycle-game">
-                <h3 style="font-size:2rem; color:#ffb74d;"><i class="fas fa-trash-alt"></i> RECICLA RÁPIDO</h3>
-                <p style="margin:15px 0;">Arrastra cada residuo a su contenedor:</p>
-                <div id="wasteItems">
-                    <span class="waste-item" draggable="true" ondragstart="drag(event)" data-type="papel">📰</span>
-                    <span class="waste-item" draggable="true" ondragstart="drag(event)" data-type="plastico">🥤</span>
-                    <span class="waste-item" draggable="true" ondragstart="drag(event)" data-type="vidrio">🍾</span>
-                </div>
-                <div class="bin-container">
-                    <div class="bin blue" ondragover="allowDrop(event)" ondrop="drop(event, 'papel')">
-                        <span style="font-size:3rem;">📘</span>
-                        <p style="font-weight:bold;">PAPEL</p>
-                    </div>
-                    <div class="bin yellow" ondragover="allowDrop(event)" ondrop="drop(event, 'plastico')">
-                        <span style="font-size:3rem;">🥫</span>
-                        <p style="font-weight:bold;">PLÁSTICO</p>
-                    </div>
-                    <div class="bin green" ondragover="allowDrop(event)" ondrop="drop(event, 'vidrio')">
-                        <span style="font-size:3rem;">🍶</span>
-                        <p style="font-weight:bold;">VIDRIO</p>
-                    </div>
-                </div>
-                <p id="recycleMessage" style="margin-top:20px; font-size:1.2rem; color:#ffd700;">¡Arrastra y aprende!</p>
-                <button onclick="resetRecycleGame()" style="margin-top:15px; padding:10px 20px; border-radius:30px; border:none; background:#ffb300;">Reiniciar juego</button>
-            </div>
+<!-- BOTONES DINÁMICOS -->
+<div style="text-align:center;margin-top:15px;">
+<button class="secondary" onclick="dailyChallenge()">🎲 Reto del Día</button>
+<button class="primary" onclick="moralDecision()">⚖️ Decisión Ecológica</button>
+<button class="danger" onclick="resetGame()">🔄 Reiniciar</button>
+</div>
 
-            <!-- JUEGO 2: PLANTA VIRTUAL -->
-            <div class="recycle-game" style="background:#2e7d32;">
-                <h3 style="font-size:2rem; color:#ccff90;"><i class="fas fa-seedling"></i> PLANTA VIRTUAL</h3>
-                <p style="margin:15px 0;">¡Haz crecer tu planta con cuidados!</p>
-                <div style="font-size:6rem; margin:20px 0; transition:0.3s;" id="plantEmoji">🌱</div>
-                <div style="display:flex; gap:15px; justify-content:center;">
-                    <button onclick="waterPlant()" style="padding:15px 25px; border-radius:40px; background:#4fc3f7; border:none; font-size:1.5rem;"><i class="fas fa-tint"></i> Regar</button>
-                    <button onclick="sunPlant()" style="padding:15px 25px; border-radius:40px; background:#ffb74d; border:none; font-size:1.5rem;"><i class="fas fa-sun"></i> Sol</button>
-                </div>
-                <p id="plantMessage" style="margin-top:20px; font-size:1.2rem;">¡Cuida tu planta y crecerá!</p>
-            </div>
-        </div>
-        <p style="margin-top:30px; background:#004d40; padding:15px; border-radius:30px; font-size:1.2rem;">
-            <i class="fas fa-info-circle"></i> 
-            <strong>¿QUÉ APORTA ESTE RED?</strong> Permite practicar hábitos ecológicos de forma virtual, refuerza el aprendizaje kinestésico y desarrolla la coordinación. Integrado a la misión #2 (Reciclar) y #3 (Plantar).
-        </p>
-    </div>
+<!-- MISIONES -->
+<div class="card">
+<h2>🗺️ Misiones</h2>
 
-    <!-- ========== ÁRBOL DE PROGRESO (VISUAL) ========== -->
-    <div class="progress-tree">
-        <h2 style="font-size:2.2rem; color:#ffd700;"><i class="fas fa-tree"></i> ÁRBOL DEL PROGRESO</h2>
-        <div class="tree-visual" id="treeEmoji">🌿</div>
-        <p style="font-size:1.5rem;" id="treeMessage">Cada misión hace crecer tu árbol</p>
-        <div class="tree-branches" id="treeBranches">
-            <!-- JS GENERA RAMAS -->
-        </div>
-    </div>
+<div class="mission" onclick="completeMission(1)">
+💧 Cuidar el Agua (+100)
+</div>
 
-    <!-- ========== MEDALLERO 3D ========== -->
-    <div class="hall-of-fame">
-        <h2 style="font-size:2.5rem; color:#1e3c1e;"><i class="fas fa-medal"></i> MEDALLERO DEL GUARDIÁN</h2>
-        <div class="medals-3d" id="medalsContainer">
-            <!-- JS GENERA MEDALLAS -->
-        </div>
-    </div>
+<div class="mission" onclick="completeMission(2)">
+♻️ Reciclar (+150)
+</div>
 
-    <!-- ========== PERSONAJES ========== -->
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:30px; margin:50px 0;">
-        <div class="character-pro" style="background:linear-gradient(145deg, #c8e6c9, #a5d6a7);">
-            <div class="character-avatar" style="background:#66bb6a;">🦸‍♀️</div>
-            <div class="character-data">
-                <div class="character-name">Capitana Verde</div>
-                <div class="power-badge"><i class="fas fa-bolt"></i> Hace crecer plantas</div>
-                <p>"¡Tú puedes salvar el planeta!"</p>
-                <button onclick="talkToCharacter('capitana')" style="padding:10px; border-radius:30px; background:#4caf50; color:white; border:none; margin-top:10px;">Hablar</button>
-            </div>
-        </div>
-        <div class="character-pro" style="background:linear-gradient(145deg, #ffe0b2, #ffcc80);">
-            <div class="character-avatar" style="background:#ffb74d;">🧙‍♂️</div>
-            <div class="character-data">
-                <div class="character-name">Mago Reciclaje</div>
-                <div class="power-badge"><i class="fas fa-bolt"></i> Transforma basura</div>
-                <p>"¡Reciclar es magia!"</p>
-                <button onclick="talkToCharacter('mago')" style="padding:10px; border-radius:30px; background:#ff9800; color:white; border:none; margin-top:10px;">Hablar</button>
-            </div>
-        </div>
-        <div class="character-pro" style="background:linear-gradient(145deg, #ffe0b2, #d7ccc8);">
-            <div class="character-avatar" style="background:#8d6e63;">🦊</div>
-            <div class="character-data">
-                <div class="character-name">Zorro Sabio</div>
-                <div class="power-badge"><i class="fas fa-bolt"></i> Sabe todo de naturaleza</div>
-                <p>"Te daré pistas secretas"</p>
-                <button onclick="talkToCharacter('zorro')" style="padding:10px; border-radius:30px; background:#795548; color:white; border:none; margin-top:10px;">Hablar</button>
-            </div>
-        </div>
-    </div>
+<div class="mission" onclick="completeMission(3)">
+🌱 Plantar (+250)
+</div>
 
-    <!-- ========== CERTIFICADO ========== -->
-    <div id="certificateArea" style="display:none;">
-        <div id="certificateDesign" class="certificate-premium">
-            <h1 style="color:#2e7d32; font-size:4rem;">🌍 CERTIFICADO</h1>
-            <h2 style="color:#ff6f00; font-size:3rem;">SÚPER GUARDIÁN</h2>
-            <p style="font-size:2rem; margin:40px 0;">Otorgado a:</p>
-            <p style="font-size:4rem; font-weight:900; color:#1e3c1e; border-bottom:8px solid #ffb300; display:inline-block;" id="certificateName">Guardián</p>
-            <p style="font-size:1.8rem; margin:40px 0;">Por completar las 5 misiones y salvar el planeta 🌍💚</p>
-            <p style="font-size:1.5rem;">🦸‍♀️ Capitana Verde · 🧙‍♂️ Mago del Reciclaje · 🦊 Zorro Sabio</p>
-            <p style="margin-top:30px;" id="certificateDate"></p>
-        </div>
-        <div style="text-align:center; margin:30px 0;">
-            <button onclick="downloadCertificate()" style="background:#ffb300; padding:25px 50px; font-size:2rem; border-radius:60px; border:none; cursor:pointer; box-shadow:0 15px 0 #b26500;">
-                <i class="fas fa-download"></i> DESCARGAR CERTIFICADO
-            </button>
-        </div>
-    </div>
+<div class="mission" onclick="completeMission(4)">
+🚶 Caminar (+350)
+</div>
 
-    <!-- ========== JUSTIFICACIÓN PEDAGÓGICA ========== -->
-    <div class="pedagogy-showcase">
-        <h2 style="color:#1a237e; font-size:2.5rem; margin-bottom:30px;"><i class="fas fa-graduation-cap"></i> JUSTIFICACIÓN PEDAGÓGICA</h2>
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:30px;">
-            <div class="author-card">
-                <span style="font-size:3rem;">🎮</span>
-                <h3 style="font-size:1.8rem;">James Paul Gee</h3>
-                <p style="font-size:1.1rem;"><strong>Aplicado en:</strong> "Aprendizaje situado" - El niño vive la identidad de "guardián", resuelve problemas reales y los personajes actúan como andamiaje. Las misiones tienen significado dentro de la narrativa.</p>
-            </div>
-            <div class="author-card">
-                <span style="font-size:3rem;">⚙️</span>
-                <h3 style="font-size:1.8rem;">Karl Kapp</h3>
-                <p style="font-size:1.1rem;"><strong>Aplicado en:</strong> Retroalimentación inmediata, puntos, niveles y progresión. Cada acción tiene recompensa visible. Los mini-juegos refuerzan el aprendizaje activo.</p>
-            </div>
-            <div class="author-card">
-                <span style="font-size:3rem;">🌱</span>
-                <h3 style="font-size:1.8rem;">Chamorro</h3>
-                <p style="font-size:1.1rem;"><strong>Aplicado en:</strong> Estudiante activo, autonomía y cooperación. No solo competencia, sino desarrollo de hábitos. Las familias participan en misiones reales.</p>
-            </div>
-        </div>
-        <p style="margin-top:30px; font-size:1.2rem; background:white; padding:20px; border-radius:30px;">
-            <strong>REFERENCIAS COMPLETAS:</strong><br>
-        Gee, J. P. (2004). Lo que nos enseñan los videojuegos sobre el aprendizaje y el alfabetismo. Ediciones Aljibe.<br>
-        Kapp, K. M. (2012). The Gamification of Learning and Instruction: Game-based Methods and Strategies for Training and Education. Pfeiffer.<br>
-        Chamorro, D. (2018). Gamificación en Educación Infantil: Estrategias para el desarrollo de habilidades cognitivas y sociales. Editorial Educativa.
-        </p>
-    </div>
+<div class="mission" onclick="completeMission(5)">
+🎨 Arte Reciclado (+500)
+</div>
 
-    <!-- ========== BOTÓN REINICIAR ========== -->
-    <div style="text-align:center; margin-top:30px;">
-        <button onclick="resetProgress()" style="background:#b71c1c; color:white; padding:15px 30px; border-radius:40px; border:none; font-size:1.2rem; cursor:pointer;">
-            <i class="fas fa-undo-alt"></i> Reiniciar progreso
-        </button>
-    </div>
+</div>
+
+<!-- INTEGRACIÓN RED -->
+<div class="card">
+<h2>🌐 Integración del RED</h2>
+<p><strong>¿Qué permite hacer?</strong> Simular acciones ecológicas mediante interacción digital.</p>
+<p><strong>¿Cómo se integra?</strong> Cada misión activa dinámicas interactivas y retroalimentación inmediata.</p>
+<p><strong>¿Qué aporta?</strong> Aprendizaje activo, motivación y visualización del progreso.</p>
+</div>
+
+<!-- JUSTIFICACIÓN -->
+<div class="card">
+<h2>📚 Justificación Pedagógica</h2>
+<p><strong>Gee (2004):</strong> Identidad proyectiva al asumir rol de Guardián.</p>
+<p><strong>Kapp (2012):</strong> Sistema de puntos y feedback inmediato.</p>
+<p><strong>Deci & Ryan:</strong> Competencia, autonomía y relación.</p>
+<p><strong>Chamorro (2018):</strong> Desarrollo de hábitos ecológicos desde la acción.</p>
+</div>
+
 </div>
 
 <script>
-    // ========== ESTADO DEL JUEGO ==========
-    let gameState = {
-        level: 1,
-        points: 0,
-        completedMissions: [],
-        badges: [],
-        plantSize: 1
-    };
 
-    // Cargar estado guardado
-    if (localStorage.getItem('guardianesRED')) {
-        gameState = JSON.parse(localStorage.getItem('guardianesRED'));
+let gameState = JSON.parse(localStorage.getItem("guardianRED2")) || {
+    level:1,
+    points:0,
+    completed:[]
+};
+
+function saveGame(){
+    localStorage.setItem("guardianRED2",JSON.stringify(gameState));
+}
+
+function updateUI(){
+    document.getElementById("level").innerText=gameState.level;
+    document.getElementById("points").innerText=gameState.points;
+    document.getElementById("missionsCount").innerText=gameState.completed.length+"/5";
+    
+    let percent=(gameState.completed.length/5)*100;
+    document.getElementById("progressFill").style.width=percent+"%";
+}
+
+function completeMission(id){
+    if(gameState.completed.includes(id)){
+        Swal.fire("Ya completaste esta misión");
+        return;
     }
 
-    // ========== BASE DE DATOS ==========
-    const missionsData = [
-        { id: 1, emoji: '💧', title: 'Cuidar el Agua', levelReq: 1, points: 100, description: 'Cierra el grifo al cepillarte', color: '#2196f3', feedback: '💧 ¡Ahorraste 12 vasos de agua!' },
-        { id: 2, emoji: '♻️', title: 'Reciclar', levelReq: 1, points: 150, description: 'Separa papel, plástico y vidrio', color: '#ff9800', feedback: '♻️ ¡Materiales listos para nueva vida!' },
-        { id: 3, emoji: '🌱', title: 'Plantar', levelReq: 2, points: 250, description: 'Siembra una semilla y cuídala', color: '#4caf50', feedback: '🌳 ¡Tu planta ya está creciendo!' },
-        { id: 4, emoji: '🚶', title: 'Caminar', levelReq: 2, points: 350, description: 'Camina a lugares cercanos', color: '#ff5722', feedback: '🚶 ¡Pies felices, planeta feliz!' },
-        { id: 5, emoji: '🎨', title: 'Arte Reciclado', levelReq: 3, points: 500, description: 'Crea arte con materiales usados', color: '#9c27b0', feedback: '🎨 ¡Obra maestra ecológica!' }
+    let pointsMap={1:100,2:150,3:250,4:350,5:500};
+    gameState.points+=pointsMap[id];
+    gameState.completed.push(id);
+
+    if(gameState.completed.length>=4) gameState.level=3;
+    else if(gameState.completed.length>=2) gameState.level=2;
+
+    saveGame();
+    updateUI();
+
+    Swal.fire("🎉 Misión completada","Ganaste puntos ecológicos","success");
+}
+
+function dailyChallenge(){
+    const challenges=[
+        "🌍 Ahorra 5 litros de agua hoy",
+        "♻️ Recicla algo en casa",
+        "🚶 Camina 10 minutos",
+        "🌱 Planta algo pequeño"
     ];
 
-    // ========== INICIALIZACIÓN ==========
-    (function init() {
-        // Pedir nombre si no existe
-        if (!localStorage.getItem('guardianName')) {
-            Swal.fire({
-                title: '🌱 ¡Bienvenido, Guardián!',
-                text: '¿Cómo te llamas?',
-                input: 'text',
-                inputValue: 'Guardián',
-                showCancelButton: false,
-                confirmButtonText: 'Comenzar aventura',
-                background: '#1b5e20',
-                color: 'white',
-                confirmButtonColor: '#4caf50'
-            }).then((result) => {
-                localStorage.setItem('guardianName', result.value || 'Guardián');
-                document.getElementById('guardianNameDisplay').innerText = result.value || 'Guardián';
-                generateLeafs();
-                renderAll();
-            });
-        } else {
-            document.getElementById('guardianNameDisplay').innerText = localStorage.getItem('guardianName');
-            generateLeafs();
-            renderAll();
-        }
-    })();
+    let random=challenges[Math.floor(Math.random()*challenges.length)];
 
-    // ========== GENERAR HOJAS ==========
-    function generateLeafs() {
-        let leafHtml = '';
-        for (let i = 0; i < 15; i++) {
-            const leafs = ['🍃', '🌿', '🍂', '🌱', '🍀'];
-            const randomLeaf = leafs[Math.floor(Math.random() * leafs.length)];
-            const left = Math.random() * 100;
-            const duration = 8 + Math.random() * 15;
-            const delay = Math.random() * 10;
-            leafHtml += `<div class="floating-leaf" style="left: ${left}%; animation-duration: ${duration}s; animation-delay: -${delay}s;">${randomLeaf}</div>`;
-        }
-        document.getElementById('leafContainer').innerHTML = leafHtml;
-    }
+    Swal.fire("🎲 Reto del Día",random,"info");
+}
 
-    // ========== RENDER MAPA DE MISIONES ==========
-    function renderMissions() {
-        let html = '';
-        missionsData.forEach(m => {
-            const completed = gameState.completedMissions.includes(m.id);
-            const locked = gameState.level < m.levelReq && !completed;
-            html += `<div class="mission-spot" style="border-color: ${m.color}; ${completed ? 'opacity:0.8;' : ''}" onclick="showMissionDetails(${m.id})">
-                <span style="font-size:4rem;">${m.emoji}</span>
-                <span style="font-size:1.3rem; font-weight:bold; text-align:center;">${m.title}</span>
-                <span style="background:${m.color}; padding:8px 15px; border-radius:30px; margin-top:10px; color:white; font-weight:bold;">+${m.points}</span>
-                ${completed ? '<span style="position:absolute; bottom:-10px; background:#ffd700; padding:8px 15px; border-radius:30px;">✅ HÉROE</span>' : ''}
-                ${locked ? '<span class="mission-spot-locked"><i class="fas fa-lock"></i></span>' : ''}
-            </div>`;
-        });
-        document.getElementById('missionPath').innerHTML = html;
-    }
-
-    // ========== MOSTRAR DETALLES DE MISIÓN ==========
-    window.showMissionDetails = function(id) {
-        const mission = missionsData.find(m => m.id === id);
-        const completed = gameState.completedMissions.includes(id);
-        const locked = gameState.level < mission.levelReq && !completed;
-        
-        if (locked) {
-            Swal.fire({
-                title: '🔒 Misión bloqueada',
-                text: `El Zorro Sabio dice: "Completa misiones de nivel ${mission.levelReq} primero"`,
-                icon: 'info',
-                background: '#263238',
-                color: 'white'
-            });
-            return;
+function moralDecision(){
+    Swal.fire({
+        title:"🚰 Dejaste el grifo abierto",
+        text:"¿Qué haces?",
+        showDenyButton:true,
+        confirmButtonText:"Lo cierro",
+        denyButtonText:"Lo dejo así"
+    }).then((result)=>{
+        if(result.isConfirmed){
+            gameState.points+=20;
+            Swal.fire("Excelente decisión 💧");
+        }else{
+            gameState.points-=10;
+            Swal.fire("El planeta perdió agua 😔");
         }
-        
-        if (completed) {
-            Swal.fire({
-                title: '✅ ¡Ya cumpliste esta misión!',
-                text: mission.feedback,
-                icon: 'success',
-                background: '#2e7d32',
-                color: 'white'
-            });
-            return;
-        }
-        
-        // Mostrar detalles y opción de completar
-        Swal.fire({
-            title: `${mission.emoji} ${mission.title}`,
-            html: `
-                <p style="font-size:1.3rem; margin-bottom:20px;">${mission.description}</p>
-                <p style="background:#e8e8e8; padding:15px; border-radius:20px;"><i class="fas fa-lightbulb"></i> Pista: ${getHint(id)}</p>
-                <p style="font-size:1.5rem; margin-top:20px; color:#2e7d32;"><strong>+${mission.points} puntos</strong></p>
-            `,
-            showCancelButton: true,
-            confirmButtonText: '✅ ¡Cumplí la misión!',
-            cancelButtonText: 'Después',
-            confirmButtonColor: '#4caf50',
-            background: '#fff9c4'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                completeMission(id);
-            }
-        });
-    };
-
-    // ========== PISTAS ==========
-    function getHint(id) {
-        const hints = {
-            1: 'Usa un vaso con agua para enjuagarte. ¡Ahorras 12 vasos!',
-            2: 'Azul = Papel, Amarillo = Plástico, Verde = Vidrio',
-            3: 'Un frasco con algodón húmedo y una semilla de frijol',
-            4: 'Caminar fortalece tu corazón y no contamina',
-            5: 'Una botella puede ser florero, un cartón un robot'
-        };
-        return hints[id];
-    }
-
-    // ========== COMPLETAR MISIÓN ==========
-    window.completeMission = function(id) {
-        const mission = missionsData.find(m => m.id === id);
-        
-        if (gameState.completedMissions.includes(id)) {
-            Swal.fire('🌟 Ya cumpliste esta misión', '', 'info');
-            return;
-        }
-        
-        gameState.completedMissions.push(id);
-        gameState.points += mission.points;
-        
-        // Calcular nivel
-        if (gameState.completedMissions.length >= 4) gameState.level = 3;
-        else if (gameState.completedMissions.length >= 2) gameState.level = 2;
-        
-        // Actualizar badges
-        gameState.badges = evaluateBadges();
-        
-        // Guardar
         saveGame();
         updateUI();
-        
-        // Celebrar
-        Swal.fire({
-            title: '🎉 ¡MISIÓN COMPLETADA!',
-            text: `${mission.feedback} Ganaste ${mission.points} puntos`,
-            icon: 'success',
-            background: '#2e7d32',
-            color: 'white',
-            timer: 3000,
-            showConfirmButton: false
-        });
-        
-        // Verificar certificado
-        if (gameState.completedMissions.length === 5) {
-            document.getElementById('certificateArea').style.display = 'block';
-            document.getElementById('certificateName').innerText = localStorage.getItem('guardianName') || 'Guardián';
-            document.getElementById('certificateDate').innerText = 'Fecha: ' + new Date().toLocaleDateString();
-            
-            Swal.fire({
-                title: '🏆 ¡FELICIDADES!',
-                text: 'Eres oficialmente un SÚPER GUARDIÁN DEL PLANETA',
-                icon: 'success',
-                background: '#ffd700',
-                color: '#1e3c1e',
-                timer: 5000
-            });
-        }
-        
-        // Actualizar árbol
-        updateTree();
-    };
+    });
+}
 
-    // ========== EVALUAR MEDALLAS ==========
-    function evaluateBadges() {
-        let badges = [];
-        if (gameState.completedMissions.includes(1)) badges.push({id:1, icon:'💧', name:'Guardián del Agua', unlocked:true});
-        if (gameState.completedMissions.includes(2)) badges.push({id:2, icon:'♻️', name:'Rey del Reciclaje', unlocked:true});
-        if (gameState.completedMissions.includes(3)) badges.push({id:3, icon:'🌳', name:'Amigo de los Árboles', unlocked:true});
-        if (gameState.completedMissions.includes(4)) badges.push({id:4, icon:'🚶', name:'Caminante Verde', unlocked:true});
-        if (gameState.completedMissions.includes(5)) badges.push({id:5, icon:'🏅', name:'Súper Héroe Verde', unlocked:true});
-        if (gameState.completedMissions.length >= 3) badges.push({id:6, icon:'🦊', name:'Amigo del Zorro', unlocked:true});
-        return badges;
-    }
+function resetGame(){
+    localStorage.removeItem("guardianRED2");
+    location.reload();
+}
 
-    // ========== RENDER MEDALLAS ==========
-    function renderBadges() {
-        let badges = evaluateBadges();
-        let allPossibleBadges = [
-            {id:1, icon:'💧', name:'Guardián del Agua'},
-            {id:2, icon:'♻️', name:'Rey del Reciclaje'},
-            {id:3, icon:'🌳', name:'Amigo de los Árboles'},
-            {id:4, icon:'🚶', name:'Caminante Verde'},
-            {id:5, icon:'🏅', name:'Súper Héroe Verde'},
-            {id:6, icon:'🦊', name:'Amigo del Zorro'}
-        ];
-        
-        let html = '';
-        allPossibleBadges.forEach(badge => {
-            const unlocked = badges.some(b => b.id === badge.id);
-            html += `<div class="medal-3d ${!unlocked ? 'locked' : ''}">
-                <span style="font-size:3rem;">${badge.icon}</span>
-                <span style="font-size:0.9rem; font-weight:bold; text-align:center; margin-top:10px;">${badge.name}</span>
-                ${!unlocked ? '<span style="font-size:1.5rem; margin-top:5px;">🔒</span>' : ''}
-            </div>`;
-        });
-        document.getElementById('medalsContainer').innerHTML = html;
-        document.getElementById('badgesCountDisplay').innerText = badges.length;
-    }
+updateUI();
 
-    // ========== ÁRBOL DE PROGRESO ==========
-    function updateTree() {
-        const count = gameState.completedMissions.length;
-        let treeEmoji = '🌱';
-        let treeMessage = '';
-        
-        if (count === 0) { treeEmoji = '🌱'; treeMessage = 'Planta tu primera misión'; }
-        else if (count === 1) { treeEmoji = '🌿'; treeMessage = '¡Está brotando!'; }
-        else if (count === 2) { treeEmoji = '🌳'; treeMessage = 'Ya es un árbol pequeño'; }
-        else if (count === 3) { treeEmoji = '🌳'; treeMessage = 'Sigue creciendo fuerte'; }
-        else if (count === 4) { treeEmoji = '🌳'; treeMessage = 'Casi un árbol gigante'; }
-        else if (count === 5) { treeEmoji = '🌴'; treeMessage = '¡ÁRBOL SÚPER GUARDIÁN!'; }
-        
-        document.getElementById('treeEmoji').innerText = treeEmoji;
-        document.getElementById('treeMessage').innerText = treeMessage;
-        
-        // Ramas
-        let branches = '';
-        for (let i = 0; i < count; i++) {
-            branches += `<div class="branch"><i class="fas fa-star"></i> Misión ${i+1}</div>`;
-        }
-        document.getElementById('treeBranches').innerHTML = branches;
-    }
-
-    // ========== MINI-JUEGO: DRAG AND DROP ==========
-    window.allowDrop = (ev) => { ev.preventDefault(); };
-    
-    window.drag = (ev) => {
-        ev.dataTransfer.setData("text", ev.target.getAttribute('data-type'));
-        ev.dataTransfer.setData("element", ev.target.outerHTML);
-    };
-    
-    window.drop = (ev, binType) => {
-        ev.preventDefault();
-        const wasteType = ev.dataTransfer.getData("text");
-        
-        if (wasteType === binType) {
-            document.getElementById('recycleMessage').innerHTML = '✅ ¡Excelente! Bien clasificado. +10 puntos ecológicos';
-            document.getElementById('recycleMessage').style.color = '#ccff90';
-            
-            // Bonus de puntos por mini-juego
-            gameState.points += 10;
-            saveGame();
-            updateUI();
-        } else {
-            document.getElementById('recycleMessage').innerHTML = '❌ Ups! Ese residuo no va ahí. Intenta de nuevo.';
-            document.getElementById('recycleMessage').style.color = '#ff8a80';
-        }
-    };
-    
-    window.resetRecycleGame = function() {
-        document.getElementById('recycleMessage').innerHTML = '¡Arrastra y aprende!';
-        document.getElementById('recycleMessage').style.color = '#ffd700';
-    };
-
-    // ========== MINI-JUEGO: PLANTA ==========
-    let plantSize = gameState.plantSize || 1;
-    
-    window.waterPlant = function() {
-        plantSize += 0.3;
-        updatePlant();
-    };
-    
-    window.sunPlant = function() {
-        plantSize += 0.2;
-        updatePlant();
-    };
-    
-    function updatePlant() {
-        if (plantSize >= 3) {
-            document.getElementById('plantEmoji').innerHTML = '🌳';
-            document.getElementById('plantMessage').innerHTML = '🎉 ¡Es un árbol gigante! Completaste la misión #3';
-            document.getElementById('plantMessage').style.color = '#ccff90';
-            plantSize = 3;
-            
-            // Bonus por completar mini-juego
-            if (!gameState.completedMissions.includes(3)) {
-                setTimeout(() => {
-                    Swal.fire({
-                        title: '🌳 ¡Felicidades!',
-                        text: 'Has hecho crecer tu planta virtual. ¡Completa la misión #3 plantando una real!',
-                        icon: 'success',
-                        background: '#2e7d32',
-                        color: 'white'
-                    });
-                }, 500);
-            }
-        } else if (plantSize >= 1.5) {
-            document.getElementById('plantEmoji').innerHTML = '🌿';
-            document.getElementById('plantMessage').innerHTML = '¡Tu planta está creciendo!';
-        } else {
-            document.getElementById('plantEmoji').innerHTML = '🌱';
-            document.getElementById('plantMessage').innerHTML = '¡Sigue cuidando tu planta!';
-        }
-        
-        document.getElementById('plantEmoji').style.transform = `scale(${plantSize})`;
-        gameState.plantSize = plantSize;
-        saveGame();
-    }
-
-    // ========== HABLAR CON PERSONAJES ==========
-    window.talkToCharacter = function(character) {
-        const messages = {
-            'capitana': {
-                title: '🦸‍♀️ Capitana Verde',
-                text: '¡Hola, guardián! Recuerda que cada planta que siembras es un respiro para el planeta. ¡Tú puedes hacer la diferencia!'
-            },
-            'mago': {
-                title: '🧙‍♂️ Mago del Reciclaje',
-                text: '¿Sabías que una botella de plástico tarda 500 años en degradarse? Pero si la reciclas, puede convertirse en una silla, una cuerda o ¡un juguete!'
-            },
-            'zorro': {
-                title: '🦊 Zorro Sabio',
-                text: 'El secreto para salvar el planeta son las pequeñas acciones de muchos héroes como tú. ¡Gracias por cuidar la naturaleza!'
-            }
-        };
-        
-        Swal.fire({
-            title: messages[character].title,
-            text: messages[character].text,
-            icon: 'info',
-            background: '#fff3e0',
-            confirmButtonColor: '#4caf50'
-        });
-    };
-
-    // ========== ACTUALIZAR UI ==========
-    function updateUI() {
-        document.getElementById('levelDisplay').innerText = gameState.level;
-        document.getElementById('pointsDisplay').innerText = gameState.points;
-        document.getElementById('missionsCompletedDisplay').innerText = `${gameState.completedMissions.length}/5`;
-        document.getElementById('levelBadge').innerHTML = `⭐ NIVEL ${gameState.level}`;
-        
-        renderMissions();
-        renderBadges();
-        updateTree();
-    }
-
-    // ========== GUARDAR ==========
-    function saveGame() {
-        localStorage.setItem('guardianesRED', JSON.stringify(gameState));
-    }
-
-    // ========== CERTIFICADO ==========
-    window.downloadCertificate = function() {
-        html2canvas(document.getElementById('certificateDesign')).then(canvas => {
-            let link = document.createElement('a');
-            link.download = `certificado-${localStorage.getItem('guardianName') || 'guardian'}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            Swal.fire('✅ Certificado descargado', '¡Eres un héroe del planeta!', 'success');
-        });
-    };
-
-    // ========== RESET ==========
-    window.resetProgress = function() {
-        Swal.fire({
-            title: '¿Reiniciar progreso?',
-            text: 'Perderás todas tus misiones y puntos',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#b71c1c',
-            cancelButtonColor: '#4caf50',
-            confirmButtonText: 'Sí, reiniciar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                localStorage.removeItem('guardianesRED');
-                localStorage.removeItem('guardianName');
-                location.reload();
-            }
-        });
-    };
-
-    // ========== RENDER TODO ==========
-    function renderAll() {
-        updateUI();
-        // Inicializar planta
-        plantSize = gameState.plantSize || 1;
-        updatePlant();
-    }
 </script>
 
 </body>
